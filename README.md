@@ -20,3 +20,4 @@ My best model was one with an initial layer of 100 neurons and with each subsequ
 - Hashvectorize to make it faster once it's in the NN
 - Upgrade to a Convolutional Neural Network to see if that's better (and/or LSDM in a Recurrent Neural Network)
 - Set up the Results_df & have it update after every run.
+- Do research into "allahsoil" and any other words or hashtags that we're currently unfamiliar with.
