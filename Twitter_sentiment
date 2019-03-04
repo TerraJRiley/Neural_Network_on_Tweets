@@ -1,0 +1,309 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "COPY/PASTE FOR STARTER README:"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "[This is for the people who aren't Data Scientists to understand what we're doing.]\n",
+    "# TITLE\n",
+    "\n",
+    "[This is where we should have the background information.  Tell us about the website we scraped it from, or the entity that gathered it.]\n",
+    "\n",
+    "## Problem Statement\n",
+    "\n",
+    "[]\n",
+    "\n",
+    "## Data Collection\n",
+    "\n",
+    "[how was the data gathered?][include challenges]\n",
+    "\n",
+    "\n",
+    "## Exploritory Data Analysis\n",
+    "\n",
+    "[Use this for the info about the data.][include challenges]\n",
+    "## Modeling\n",
+    "\n",
+    "[Which model(s) did we select and why?][include challenges]\n",
+    "\n",
+    "## Results\n",
+    "\n",
+    "[]\n",
+    "\n",
+    "## Future Steps"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Problem Statement/Goal\n",
+    " - "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Future Tasks:\n",
+    "- .\n",
+    " \n",
+    "## Completed Tasks:\n",
+    "- .\n",
+    " \n",
+    "## Conquered Challenges:\n",
+    "- Challenge:\n",
+    "    - Solution(s):"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Imports"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "import matplotlib.pyplot as plt\n",
+    "import seaborn as sns\n",
+    "%matplotlib inline"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Scraping Libraries\n",
+    "from bs4 import BeautifulSoup\n",
+    "import requests\n",
+    "from selenium import webdriver\n",
+    "from time import sleep\n",
+    "import re"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Natural Language Processing libraries, initiations and functions\n",
+    "from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer\n",
+    "from nltk.stem import WordNetLemmatizer\n",
+    "from nltk import word_tokenize\n",
+    "from nltk.corpus import stopwords\n",
+    "from sklearn.decomposition import LatentDirichletAllocation\n",
+    "import re # Delete this if scraping in same notebook\n",
+    "\n",
+    "def preprocess(text):\n",
+    "    text = re.sub(r'[^a-zA-Z]',' ', text.lower())\n",
+    "    tokens = word_tokenize(text)\n",
+    "    lemmer = WordNetLemmatizer()\n",
+    "    stop_words = stopwords.words(\"english\")\n",
+    "    return \" \".join([lemmer.lemmatize(word) for word \n",
+    "                     in tokens if len(word) > 1 and not word in stop_words])\n",
+    "cvec = CountVectorizer(analyzer = \"word\",\n",
+    "                       min_df = 2,\n",
+    "                       preprocessor = preprocess,\n",
+    "                       stop_words = 'english')\n",
+    "pd.DataFrame(cvec.fit_transform(df['COLUMN']).todense(), columns=cvec.get_feature_names())\n",
+    "\n",
+    "def LDA(df_column, num_topics = 3, num_words = 5):\n",
+    "    # Cols are the words. Rows are the topics\n",
+    "    topic_lists = []\n",
+    "    lda = LatentDirichletAllocation(n_components=num_topics, learning_method='online')\n",
+    "    lda.fit(cvec.fit_transform(df_column))\n",
+    "    for ix, topic in enumerate(lda.components_):\n",
+    "        topic_lists += [[cvec.get_feature_names()[i] for i \n",
+    "                         in lda.components_[ix].argsort()[:-num_words - 1:-1]]]\n",
+    "\n",
+    "    return pd.DataFrame(topic_lists, columns=[ 'word_' + str(i) for i \n",
+    "                                    in range(1, num_words+1)], index=range(1, num_topics + 1)) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Model Prep\n",
+    "from sklearn.model_selection import train_test_split, cross_val_score\n",
+    "from sklearn.preprocessing import StandardScaler, PolynomialFeatures\n",
+    "\n",
+    "# Regression Models\n",
+    "from sklearn.linear_model import LinearRegression\n",
+    "from sklearn.neighbors import KNeighborsRegressor\n",
+    "from sklearn.tree import DecisionTreeRegressor\n",
+    "from sklearn.ensemble import BaggingRegressor, RandomForestRegressor, AdaBoostRegressor, ExtraTreesRegressor\n",
+    "\n",
+    "# Classification Models\n",
+    "from sklearn.linear_model import LogisticRegression\n",
+    "from sklearn.neighbors import KNeighborsClassifier\n",
+    "from sklearn.tree import DecisionTreeClassifier\n",
+    "from sklearn.ensemble import BaggingClassifier, RandomForestClassifier, AdaBoostClassifier, ExtraTreesClassifier\n",
+    "\n",
+    "# Nieve Bayes\n",
+    "from sklearn.naive_bayes import MultinomialNB, BernoulliNB, GaussianNB # Check notes on these"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Data Collection"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Viewing of Raw Data"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Cleaning"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Exploritory Data Analysis"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Modeling"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Modeling Imports & Initiations"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Historical Lists of Features & Their Results"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Laboritory!\n",
+    " - The place for all the code that I'm currently working on.  \n",
+    " - This is to keep the rest of the notebook clean."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Code Recycling Bin\n",
+    "- For when I'm not yet ready to delete certain old code."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.0"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
